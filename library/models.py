@@ -2,12 +2,15 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+
 class Book(models.Model):
     title = models.CharField(max_length=200, verbose_name="Название")
     author = models.CharField(max_length=150, verbose_name="Автор")
     isbn = models.CharField(max_length=13, unique=True, verbose_name="ISBN")
-    inventory_count = models.PositiveIntegerField(default=1, verbose_name="Количество в наличии")
-    
+    inventory_count = models.PositiveIntegerField(
+        default=1, verbose_name="Количество в наличии"
+    )
+
     def __str__(self):
         return self.title
 
@@ -15,18 +18,25 @@ class Book(models.Model):
         verbose_name = "Книга"
         verbose_name_plural = "Книги"
 
+
 class Loan(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='loans', verbose_name="Книга")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='loans', verbose_name="Читатель")
+    book = models.ForeignKey(
+        Book, on_delete=models.CASCADE, related_name="loans", verbose_name="Книга"
+    )
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="loans", verbose_name="Читатель"
+    )
     taken_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата выдачи")
-    returned_at = models.DateTimeField(null=True, blank=True, verbose_name="Дата возврата")
+    returned_at = models.DateTimeField(
+        null=True, blank=True, verbose_name="Дата возврата"
+    )
     is_active = models.BooleanField(default=True, verbose_name="Книга на руках")
 
     def return_book(self):
         """Метод для возврата книги"""
         if self.is_active:  # если книга еще на руках
             self.returned_at = timezone.now()
-            self.is_active = False # книга возвращена
+            self.is_active = False  # книга возвращена
             self.book.inventory_count += 1
             self.book.save()
             self.save()
