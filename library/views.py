@@ -1,10 +1,16 @@
-from rest_framework import viewsets, permissions, status, mixins
+from rest_framework import viewsets, permissions, status, mixins, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.contrib.auth.models import User
-from .models import Book, Loan
-from .serializers import BookSerializer, LoanSerializer, UserRegistrationSerializer
+from .models import Book, Loan, Author, CustomUser
+from .serializers import BookSerializer, LoanSerializer, UserRegistrationSerializer, AuthorSerializer
 from .permissions import IsAdminOrReadOnly
+
+
+class AuthorViewSet(viewsets.ModelViewSet):
+    """Класс авторов книг"""
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
+    permission_classes = [IsAdminOrReadOnly]
 
 
 class BookViewSet(viewsets.ModelViewSet):
@@ -16,6 +22,9 @@ class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAdminOrReadOnly]
+
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'isbn', 'author__last_name']
 
 
 class LoanViewSet(
@@ -68,6 +77,6 @@ class LoanViewSet(
 
 
 class UserRegistrationViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]
