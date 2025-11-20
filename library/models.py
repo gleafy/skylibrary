@@ -1,11 +1,27 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+
+
+class CustomUser(AbstractUser):
+    pass
+
+
+class Author(models.Model):
+    first_name = models.CharField(max_length=100, verbose_name="Имя")
+    last_name = models.CharField(max_length=100, verbose_name="Фамилия")
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+    class Meta:
+        verbose_name = "Автор"
+        verbose_name_plural = "Авторы"
 
 
 class Book(models.Model):
     title = models.CharField(max_length=200, verbose_name="Название")
-    author = models.CharField(max_length=150, verbose_name="Автор")
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='books', verbose_name="Автор")
     isbn = models.CharField(max_length=13, unique=True, verbose_name="ISBN")
     inventory_count = models.PositiveIntegerField(
         default=1, verbose_name="Количество в наличии"
@@ -24,7 +40,7 @@ class Loan(models.Model):
         Book, on_delete=models.CASCADE, related_name="loans", verbose_name="Книга"
     )
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="loans", verbose_name="Читатель"
+        CustomUser, on_delete=models.CASCADE, related_name="loans", verbose_name="Читатель"
     )
     taken_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата выдачи")
     returned_at = models.DateTimeField(
