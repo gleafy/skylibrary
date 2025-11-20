@@ -11,3 +11,9 @@ dependencies = [
     "psycopg2-binary>=2.9.11",
     "python-dotenv>=1.2.1",
 ]
+
+[dependency-groups]
+dev = []
+lint = [
+    "black>=25.11.0",
+]
