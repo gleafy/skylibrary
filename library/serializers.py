@@ -1,12 +1,19 @@
 from rest_framework import serializers
-from .models import Book, Loan
-from django.contrib.auth.models import User
+from .models import Book, Loan, Author, CustomUser
+
+
+class AuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Author
+        fields = '__all__'
 
 
 class BookSerializer(serializers.ModelSerializer):
+    author_info = AuthorSerializer(source='author', read_only=True)
+
     class Meta:
         model = Book
-        fields = ["id", "title", "author", "isbn", "inventory_count"]
+        fields = ['id', 'title', 'author', 'author_info', 'isbn', 'inventory_count']
 
 
 class LoanSerializer(serializers.ModelSerializer):
@@ -36,11 +43,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ("username", "password", "email")
 
     def create(self, validated_data):
-        user = User.objects.create_user(
+        user = CustomUser.objects.create_user(
             username=validated_data["username"],
             password=validated_data["password"],
             email=validated_data.get("email", ""),
