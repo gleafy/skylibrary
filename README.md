@@ -13,11 +13,17 @@
 ## Запуск проекта
 
 1. Убедитесь, что установлен Docker и Docker Compose.
-2. Запустите проект командой:
+2. Клонируйте репозиторий;
+    ```bash
+    git clone https://github.com/gleafy/skylibrary
+    cd skylibrary
+    ```
+3. Создайте .env файл на основе существующего примера .env.example
+4. Запустите проект командой:
     ```bash
     docker-compose up -d --build
     ```
-3.  Создайте суперпользователя (администратора):
+5.  Создайте суперпользователя (администратора):
     ```bash
     docker-compose exec web python manage.py createsuperuser
     ```
@@ -26,8 +32,8 @@
 
 После запуска документация доступна по адресу:
 
-  * Swagger UI: `http://localhost:8000/`
-  * ReDoc: `http://localhost:8000/redoc/`
+  * Swagger UI: `http://localhost/`
+  * ReDoc: `http://localhost/redoc/`
 
 ## Права доступа (Permissions)
 
