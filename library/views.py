@@ -1,8 +1,8 @@
 from rest_framework import viewsets, permissions, status, mixins, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import Book, Loan, Author, CustomUser
-from .serializers import BookSerializer, LoanSerializer, UserRegistrationSerializer, AuthorSerializer
+from .models import Book, Loan, Author
+from .serializers import BookSerializer, LoanSerializer, AuthorSerializer
 from .permissions import IsAdminOrReadOnly
 
 
@@ -74,9 +74,3 @@ class LoanViewSet(
 
         loan.return_book()
         return Response({"status": "Книга возвращена"}, status=status.HTTP_200_OK)
-
-
-class UserRegistrationViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
-    queryset = CustomUser.objects.all()
-    serializer_class = UserRegistrationSerializer
-    permission_classes = [permissions.AllowAny]

@@ -1,10 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
-
-
-class CustomUser(AbstractUser):
-    pass
+from django.conf import settings
 
 
 class Author(models.Model):
@@ -40,7 +36,7 @@ class Loan(models.Model):
         Book, on_delete=models.CASCADE, related_name="loans", verbose_name="Книга"
     )
     user = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="loans", verbose_name="Читатель"
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="loans", verbose_name="Читатель"
     )
     taken_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата выдачи")
     returned_at = models.DateTimeField(

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'drf_yasg',
 
     'library',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -161,4 +162,4 @@ SWAGGER_SETTINGS = {
 }
 
 # Кастомная модель пользователя
-AUTH_USER_MODEL = 'library.CustomUser'
+AUTH_USER_MODEL = 'users.CustomUser'

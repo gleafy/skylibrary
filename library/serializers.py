@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Book, Loan, Author, CustomUser
+from .models import Book, Loan, Author
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -37,19 +37,3 @@ class LoanSerializer(serializers.ModelSerializer):
         if value.inventory_count <= 0:
             raise serializers.ValidationError("Этой книги сейчас нет в наличии.")
         return value
-
-
-class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = CustomUser
-        fields = ("username", "password", "email")
-
-    def create(self, validated_data):
-        user = CustomUser.objects.create_user(
-            username=validated_data["username"],
-            password=validated_data["password"],
-            email=validated_data.get("email", ""),
-        )
-        return user
