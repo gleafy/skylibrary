@@ -7,6 +7,13 @@ dependencies = [
     "djangorestframework>=3.16.1",
     "djangorestframework-simplejwt>=5.5.1",
     "drf-yasg>=1.21.11",
+    "gunicorn>=23.0.0",
     "psycopg2-binary>=2.9.11",
     "python-dotenv>=1.2.1",
+]
+
+[dependency-groups]
+dev = []
+lint = [
+    "black>=25.11.0",
 ]
