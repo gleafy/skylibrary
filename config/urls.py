@@ -23,7 +23,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     
     # Эндпоинты нашего приложения
+    # Библиотека (книги, авторы, выдача, поиск)
     path('api/', include('library.urls')),
+    # Пользователи (регистрация)
+    path('api/users/', include('users.urls')),
     
     # JWT Авторизация
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
