@@ -1,6 +1,10 @@
 from rest_framework import viewsets, permissions, status, mixins, filters
+from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.db.models import Q
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from .models import Book, Loan, Author
 from .serializers import BookSerializer, LoanSerializer, AuthorSerializer
 from .permissions import IsAdminOrReadOnly
@@ -74,3 +78,49 @@ class LoanViewSet(
 
         loan.return_book()
         return Response({"status": "Книга возвращена"}, status=status.HTTP_200_OK)
+
+
+class GlobalSearchView(APIView):
+    """
+    Отдельный эндпоинт для поиска книг и авторов.
+    Пример запроса: /api/library/search/?q=Толстой
+    """
+
+    # Описываем кастомную схему, чтобы swagger показывал поле ввода q
+    # https://drf-yasg.readthedocs.io/en/stable/custom_spec.html#the-swagger-auto-schema-decorator
+    @swagger_auto_schema(
+        manual_parameters=[
+            # Определяем, что мы ожидаем параметр 'q'
+            openapi.Parameter(
+                'q',                                     # Имя параметра
+                openapi.IN_QUERY,                        # Где его искать (в строке запроса: ?q=...)
+                description="Поисковый запрос (название книги, ISBN, имя/фамилия автора)",
+                type=openapi.TYPE_STRING,
+                required=True                            # Устанавливаем, что параметр обязателен
+            )
+        ]
+    )
+    def get(self, request):
+        query = request.query_params.get('q')
+
+        if not query:
+            return Response({"error": "Параметр 'q' обязателен"}, status=400)
+
+        # Используем Q-объекты для выполнения логического ИЛИ (OR) в запросах.
+        # Решение найдено в документации: 
+        # https://docs.djangoproject.com/en/4.2/topics/db/queries/#complex-lookups-with-q-objects
+
+        # Ищем книги по названию ИЛИ ISBN
+        books = Book.objects.filter(
+            Q(title__icontains=query) | Q(isbn__icontains=query)
+        )
+
+        # Ищем авторов по имени ИЛИ фамилии
+        authors = Author.objects.filter(
+            Q(first_name__icontains=query) | Q(last_name__icontains=query)
+        )
+
+        return Response({
+            "books": BookSerializer(books, many=True).data,
+            "authors": AuthorSerializer(authors, many=True).data
+        })
