@@ -83,7 +83,7 @@ class LoanViewSet(
 class GlobalSearchView(APIView):
     """
     Отдельный эндпоинт для поиска книг и авторов.
-    Пример запроса: /api/library/search/?q=Толстой
+    Пример запроса: /api/search/?q=Толстой
     """
 
     # Описываем кастомную схему, чтобы swagger показывал поле ввода q
