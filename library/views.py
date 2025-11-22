@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q
-from drf_yasg.utils import swagger_auto_schema
+from drf_yasg.utils import swagger_auto_schema, no_body
 from drf_yasg import openapi
 from .models import Book, Loan, Author
 from .serializers import BookSerializer, LoanSerializer, AuthorSerializer
@@ -60,6 +60,8 @@ class LoanViewSet(
         # Автоматически привязываем текущего юзера к выдаче
         serializer.save(user=self.request.user)
 
+    # Отключение генерации тела запроса в схеме swagger
+    @swagger_auto_schema(request_body=no_body)
     @action(detail=True, methods=["post"])
     def return_book(self, request, pk=None):
         """Эндпоинт для возврата книги: /api/loans/{id}/return_book/"""
