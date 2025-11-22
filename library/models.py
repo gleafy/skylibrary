@@ -17,7 +17,9 @@ class Author(models.Model):
 
 class Book(models.Model):
     title = models.CharField(max_length=200, verbose_name="Название")
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='books', verbose_name="Автор")
+    author = models.ForeignKey(
+        Author, on_delete=models.CASCADE, related_name="books", verbose_name="Автор"
+    )
     isbn = models.CharField(max_length=13, unique=True, verbose_name="ISBN")
     inventory_count = models.PositiveIntegerField(
         default=1, verbose_name="Количество в наличии"
@@ -36,7 +38,10 @@ class Loan(models.Model):
         Book, on_delete=models.CASCADE, related_name="loans", verbose_name="Книга"
     )
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="loans", verbose_name="Читатель"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="loans",
+        verbose_name="Читатель",
     )
     taken_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата выдачи")
     returned_at = models.DateTimeField(

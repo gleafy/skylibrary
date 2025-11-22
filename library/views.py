@@ -12,6 +12,7 @@ from .permissions import IsAdminOrReadOnly
 
 class AuthorViewSet(viewsets.ModelViewSet):
     """Класс авторов книг"""
+
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
     permission_classes = [IsAdminOrReadOnly]
@@ -28,7 +29,7 @@ class BookViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
 
     filter_backends = [filters.SearchFilter]
-    search_fields = ['title', 'isbn', 'author__last_name']
+    search_fields = ["title", "isbn", "author__last_name"]
 
 
 class LoanViewSet(
@@ -92,22 +93,22 @@ class GlobalSearchView(APIView):
         manual_parameters=[
             # Определяем, что мы ожидаем параметр 'q'
             openapi.Parameter(
-                'q',                                     # Имя параметра
-                openapi.IN_QUERY,                        # Где его искать (в строке запроса: ?q=...)
+                "q",  # Имя параметра
+                openapi.IN_QUERY,  # Где его искать (в строке запроса: ?q=...)
                 description="Поисковый запрос (название книги, ISBN, имя/фамилия автора)",
                 type=openapi.TYPE_STRING,
-                required=True                            # Устанавливаем, что параметр обязателен
+                required=True,  # Устанавливаем, что параметр обязателен
             )
         ]
     )
     def get(self, request):
-        query = request.query_params.get('q')
+        query = request.query_params.get("q")
 
         if not query:
             return Response({"error": "Параметр 'q' обязателен"}, status=400)
 
         # Используем Q-объекты для выполнения логического ИЛИ (OR) в запросах.
-        # Решение найдено в документации: 
+        # Решение найдено в документации:
         # https://docs.djangoproject.com/en/4.2/topics/db/queries/#complex-lookups-with-q-objects
 
         # Ищем книги по названию ИЛИ ISBN
@@ -120,7 +121,9 @@ class GlobalSearchView(APIView):
             Q(first_name__icontains=query) | Q(last_name__icontains=query)
         )
 
-        return Response({
-            "books": BookSerializer(books, many=True).data,
-            "authors": AuthorSerializer(authors, many=True).data
-        })
+        return Response(
+            {
+                "books": BookSerializer(books, many=True).data,
+                "authors": AuthorSerializer(authors, many=True).data,
+            }
+        )

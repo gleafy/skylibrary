@@ -5,15 +5,15 @@ from .models import Book, Loan, Author
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
-        fields = '__all__'
+        fields = "__all__"
 
 
 class BookSerializer(serializers.ModelSerializer):
-    author_info = AuthorSerializer(source='author', read_only=True)
+    author_info = AuthorSerializer(source="author", read_only=True)
 
     class Meta:
         model = Book
-        fields = ['id', 'title', 'author', 'author_info', 'isbn', 'inventory_count']
+        fields = ["id", "title", "author", "author_info", "isbn", "inventory_count"]
 
 
 class LoanSerializer(serializers.ModelSerializer):
